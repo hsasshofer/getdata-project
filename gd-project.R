@@ -1,6 +1,6 @@
 # data files are in subdirectory
 workdir <- "UCI HAR Dataset"
-if (FALSE) {
+
 # read activity indeces[,1] and names[,2] (6)
 actnames  <- read.table(file.path(workdir, "activity_labels.txt"), head= FALSE, stringsAsFactors= FALSE)
 # read feature indices[,1] and names[,2] (561)
@@ -36,28 +36,12 @@ colnames(data) <- c("subject",
 rownames(data) <- sub("(.*)", "activity.\\1", 1:nrow(data))
 # write as CSV with row names (columns names are automatic) and without quoting
 write.csv(data, file.path(workdir, "clean.csv"), row.names= T, quote= F)
-}
 
-# build a data frame with mean values for all variables per activity
-meanact <- tapply(data[,3], data$activity, mean)
-for (i in 4:ncol(data)) 
-    meanact <- cbind(tapply(data[,i], data$activity, mean), meanact)
-# build a data frame with mean values for all variables per subject
-meansub <- tapply(data[,3], data$subject, mean)
-for (i in 4:ncol(data)) 
-    meansub <- cbind(tapply(data[,i], data$subject, mean), meansub)
-# add row names as "subject.#" using row number
-rownames(meansub) <- sub("(.*)", "subject.\\1", 1:nrow(meansub))
-# merge the two frames
-mean <- rbind(meanact, meansub)
-# add the variable names as column names
-colnames(mean) <- colnames(data)[3:ncol(data)]
-# write as CSV with row names (columns names are automatic) and without quoting
-write.csv(mean, file.path(workdir, "mean.csv"), row.names= T, quote= F)
-
-# alternatively average per subject per activity
-agg <- aggregate(data[,3:ncol(data)], by= list(data$subject, data$activity), FUN= mean)
+# build average per subject per activity
+means <- aggregate(data[,3:ncol(data)], by= list(data$subject, data$activity), FUN= mean)
 # add column names for the categories
-colnames(agg)[c(1, 2)] <- c("subject", "activity")
+colnames(means)[c(1, 2)] <- c("subject", "activity")
+# add row names as "means.#"
+rownames(means) <- sub("(.*)", "mean.\\1", 1:nrow(means))
 # write as CSV with row names (columns names are automatic) and without quoting
-write.csv(agg, file.path(workdir, "means.csv"), row.names= T, quote= F)
+write.csv(means, file.path(workdir, "means.csv"), row.names= T, quote= F)
