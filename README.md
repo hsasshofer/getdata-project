@@ -82,7 +82,7 @@ Write out the merged and cleaned data set (just for reference).
 write.csv(data, file.path(workdir, "clean.csv"), row.names= T, quote= F)
 ```
 
-Aggregate the date to generate averages per subject per activity.
+Aggregate the data to generate averages per subject per activity.
 
 ```{r}
 # build average per subject per activity
@@ -98,7 +98,7 @@ colnames(means)[c(1, 2)] <- c("subject", "activity")
 rownames(means) <- sub("(.*)", "mean.\\1", 1:nrow(means))
 ```
 
-Write out the data as CSV file (uploaded to gradign system as .TXT due to limitations in file naming).
+Write out the data as CSV file (uploaded to grading system as .TXT due to limitations in file naming).
 
 ```{r}
 # write as CSV with row names (columns names are automatic) and without quoting
